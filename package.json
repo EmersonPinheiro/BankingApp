@@ -1,5 +1,5 @@
 {
-  "name": "BankingApp",
+  "name": "banking-app",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -7,7 +7,10 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --check .",
+    "a": "adb reverse tcp:8081 tcp:8081 && react-native run-android",
+    "s": "adb reverse tcp:8081 tcp:8081 && react-native start"
   },
   "dependencies": {
     "react": "16.13.1",
@@ -20,10 +23,16 @@
     "@types/jest": "^25.2.3",
     "@types/react-native": "^0.63.2",
     "@types/react-test-renderer": "^16.9.2",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
     "babel-jest": "^25.1.0",
     "eslint": "^6.5.1",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.59.0",
+    "prettier": "^2.2.1",
     "react-test-renderer": "16.13.1",
     "typescript": "^3.8.3"
   },
