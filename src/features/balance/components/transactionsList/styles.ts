@@ -1,0 +1,43 @@
+import styled from 'styled-components/native';
+
+export const Container = styled.View`
+  flex: 1;
+  background-color: #ffffff;
+  padding-horizontal: 20px;
+  padding-top: 32px;
+`;
+
+export const Title = styled.Text`
+  font-family: 'Montserrat-Medium';
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #333333;
+`;
+
+export const ItemSeparator = styled.View`
+  width: 2px;
+  height: 24px;
+  background-color: #eaeaea;
+  border-radius: 1px;
+  margin-left: 15px;
+`;
+
+export const ListFooterContainer = styled.View`
+  flex: 1 auto;
+  align-self: flex-end;
+  padding-top: 8px;
+`;
+
+export const StyledTouchable = styled.TouchableOpacity`
+  width: 80px;
+`;
+
+export const StyledTouchableTextContainer = styled.View`
+  flex: 1;
+`;
+export const StyledTouchableText = styled.Text`
+  text-align: right;
+  color: #00aeef;
+  font-family: 'Montserrat-Bold';
+  margin-vertical: 12px;
+`;

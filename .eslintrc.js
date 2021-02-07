@@ -38,6 +38,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-assignment': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/unbound-method': 'off',
     '@typescript-eslint/ban-types': 'warn',
     'react/display-name': 'off',
     'react/prop-types': 'off',
