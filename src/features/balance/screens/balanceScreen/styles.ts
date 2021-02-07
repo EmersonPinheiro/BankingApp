@@ -1,8 +1,6 @@
-import styled, {css} from 'styled-components/native';
+import styled from 'styled-components/native';
 
 export const Container = styled.View`
-  ${() => css`
-    flex: 1;
-    background-color: #f8f8f8;
-  `}
+  flex: 1;
+  background-color: #f8f8f8;
 `;

@@ -26,8 +26,8 @@ import {
 } from './styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {compareAsc, parse, format} from 'date-fns';
-import {UserDataContext} from '../../../../../App';
 import Icon from 'react-native-vector-icons/Feather';
+import {UserDataContext} from '../../../../api/DataContextProvider';
 
 const INITIAL_PAGE_LENGTH = 3;
 

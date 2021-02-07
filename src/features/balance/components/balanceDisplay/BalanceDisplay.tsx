@@ -9,8 +9,8 @@ import {
   Container,
 } from './styles';
 import Icon from 'react-native-vector-icons/Feather';
-import {UserDataContext} from '../../../../../App';
 import {BRLCurrencyFormat} from '../../../../utils/mixins';
+import {UserDataContext} from '../../../../api/DataContextProvider';
 
 const BalanceDisplay: FC = () => {
   const [showBalance, setShowBalance] = useState<boolean>();

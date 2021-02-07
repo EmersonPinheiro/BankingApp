@@ -13,7 +13,7 @@ interface TransactionListItemProps {
 
 const TransactionListItem: FC<TransactionListItemProps> = ({item, showTransactionDetails}) => {
   const {positiveAmount, label, iconName, amount} = useMemo(() => {
-    const positiveAmount = item.amount > 0;
+    const positiveAmount = +item.amount > 0;
     const date = item.date ? format(new Date(item.date), 'dd/MM/yyyy') : '';
     const label = date ? (positiveAmount ? 'Recebido em ' + date : 'Pago em ' + date) : '';
     const iconName = positiveAmount ? 'arrow-down' : 'arrow-up';
@@ -33,7 +33,7 @@ const TransactionListItem: FC<TransactionListItemProps> = ({item, showTransactio
   return (
     <TouchableOpacity onPress={onPress}>
       <Container>
-        {item.amount !== 0 && <Icon name={iconName} size={32} color="#333333" />}
+        {+item.amount !== 0 && <Icon name={iconName} size={32} color="#333333" />}
         <DescriptionContainer>
           <Description>{item.description}</Description>
           <PositiveIndicatorText positiveAmount={positiveAmount}>{label}</PositiveIndicatorText>

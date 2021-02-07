@@ -1,11 +1,9 @@
 import 'react-native-gesture-handler';
-import React, {FC, createContext} from 'react';
+import React, {FC} from 'react';
 import {UIManager, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import userData from './userData.json'; //HACK: Just to emulate data already fetched fom DB
 import {RootNavigator} from './src/navigation/RootNavigator';
-
-export const UserDataContext = createContext(userData);
+import UserDataContextProvider from './src/api/DataContextProvider';
 
 const App: FC = () => {
   if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -14,9 +12,9 @@ const App: FC = () => {
 
   return (
     <NavigationContainer>
-      <UserDataContext.Provider value={userData}>
+      <UserDataContextProvider>
         <RootNavigator />
-      </UserDataContext.Provider>
+      </UserDataContextProvider>
     </NavigationContainer>
   );
 };

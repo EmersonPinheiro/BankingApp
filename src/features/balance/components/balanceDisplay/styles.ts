@@ -6,6 +6,7 @@ const screenHeight = Dimensions.get('window').height;
 export const Container = styled.View`
   height: ${screenHeight * 0.3}px;
   justify-content: center;
+  padding-bottom: 20px;
 `;
 
 export const BalanceTitle = styled.Text`

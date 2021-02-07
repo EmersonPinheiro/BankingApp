@@ -10,7 +10,7 @@ import {
   Text,
 } from './styles';
 import {useNavigation} from '@react-navigation/native';
-import {UserDataContext} from '../../../../../App';
+import {UserDataContext} from '../../../../api/DataContextProvider';
 
 const HomeScreen: FC = () => {
   const {navigate} = useNavigation();
