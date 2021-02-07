@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {FC, createContext} from 'react';
-import {Text} from 'react-native';
+import {Text, UIManager, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -33,6 +33,10 @@ function RootNavigator() {
 }
 
 const App: FC = () => {
+  if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
   return (
     <NavigationContainer>
       <UserDataContext.Provider value={userData}>

@@ -1,5 +1,13 @@
 import React, {FC, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {FlatList, TouchableOpacity, Platform, View, ActivityIndicator} from 'react-native';
+import {
+  FlatList,
+  TouchableOpacity,
+  Platform,
+  View,
+  ActivityIndicator,
+  LayoutAnimation,
+  useWindowDimensions,
+} from 'react-native';
 import {ITransaction} from '../../../../api/ITransaction';
 import {TransactionDetailsModal, TransactionListItem} from './components';
 import {
@@ -14,10 +22,12 @@ import {
   DateFilterText,
   DateFilterTextContainer,
   ActivityIndicatorContainer,
+  CollapseListIconContainer,
 } from './styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {compareAsc, parse, format} from 'date-fns';
 import {UserDataContext} from '../../../../../App';
+import Icon from 'react-native-vector-icons/Feather';
 
 const INITIAL_PAGE_LENGTH = 3;
 
@@ -26,7 +36,10 @@ const TransactionsList: FC = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<ITransaction>();
   const [transactionList, setTransactionList] = useState<ITransaction[]>();
   const [selectedDate, setSelectedDate] = useState();
-  const [showDatePicker, setShowDatePicker] = useState<boolean>();
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [expandedList, setExpandedList] = useState<boolean>(false);
+
+  const dimensions = useWindowDimensions();
 
   // All the fetching logic could be made using a Redux like solution (ex. Context, Redux...), but here, I'll just emulate it with loadings inside the screen (which isn't good ;/ )
   // Also, the date filter may contain some workarounds, in order to work with the emulated requests functions created.
@@ -64,6 +77,8 @@ const TransactionsList: FC = () => {
 
   const getAllTransactions = useCallback(async () => {
     if (!showingAllTransactions) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+      setExpandedList(true);
       setLoadingMore(true);
       const items = await fetchTransactions();
       setTransactionList(items);
@@ -176,10 +191,31 @@ const TransactionsList: FC = () => {
     setShowingAllTransactions(false);
   }, []);
 
+  const collapseListIcon = useCallback(() => {
+    const iconName = expandedList ? 'chevron-down' : 'chevron-up';
+
+    if (!showingAllTransactions) {
+      return null;
+    }
+
+    return (
+      <CollapseListIconContainer>
+        <TouchableOpacity
+          onPress={() => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+            setExpandedList(!expandedList);
+          }}>
+          <Icon name={iconName} size={24} color="#00aeef" />
+        </TouchableOpacity>
+      </CollapseListIconContainer>
+    );
+  }, [expandedList, showingAllTransactions]);
+
   return (
     <>
-      <Container>
+      <Container style={{marginTop: expandedList ? -dimensions.height * 0.3 : 0}}>
         <Title>Histórico de transações</Title>
+        {collapseListIcon()}
         <View>
           <DateFilterTextContainer>
             {!selectedDate ? (

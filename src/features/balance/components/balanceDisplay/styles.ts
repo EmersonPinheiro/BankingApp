@@ -1,10 +1,18 @@
 import styled from 'styled-components/native';
+import {Dimensions} from 'react-native';
+
+const screenHeight = Dimensions.get('window').height;
+
+export const Container = styled.View`
+  height: ${screenHeight * 0.3}px;
+  justify-content: center;
+`;
 
 export const BalanceTitle = styled.Text`
   font-family: 'Montserrat-Medium';
   font-size: 14px;
   text-align: center;
-  margin-top: 8px;
+  margin-vertical: 12px;
   margin-horizontal: 20px;
   color: #333333;
 `;

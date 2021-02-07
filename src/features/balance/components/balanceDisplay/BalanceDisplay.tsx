@@ -6,6 +6,7 @@ import {
   BalanceTouchableWrapper,
   HideBalanceView,
   IconContainer,
+  Container,
 } from './styles';
 import Icon from 'react-native-vector-icons/Feather';
 import {UserDataContext} from '../../../../../App';
@@ -31,7 +32,7 @@ const BalanceDisplay: FC = () => {
   }, [showBalance]);
 
   return (
-    <>
+    <Container>
       <BalanceTitle>Meu saldo</BalanceTitle>
       <BalanceTouchableWrapper>
         {showBalance ? (
@@ -41,7 +42,7 @@ const BalanceDisplay: FC = () => {
         )}
         <TouchableOpacity onPress={toggleBalanceVisibility}>{renderIcon()}</TouchableOpacity>
       </BalanceTouchableWrapper>
-    </>
+    </Container>
   );
 };
 

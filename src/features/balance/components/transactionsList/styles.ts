@@ -5,6 +5,7 @@ export const Container = styled.View`
   background-color: #ffffff;
   padding-horizontal: 20px;
   padding-top: 32px;
+  elevation: 4;
 `;
 
 export const Title = styled.Text`
@@ -64,4 +65,10 @@ export const ActivityIndicatorContainer = styled.View`
   flex: 1;
   justify-content: center;
   padding: 16px;
+`;
+
+export const CollapseListIconContainer = styled.View`
+  position: absolute;
+  top: 30px;
+  right: 30px;
 `;
