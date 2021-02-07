@@ -7,6 +7,8 @@ interface BalanceScreenHeader {
 export const Container = styled.View`
   flex-direction: row;
   align-items: flex-end;
+  padding-top: 20px;
+  padding-left: 20px;
 `;
 
 export const Text = styled.Text`
