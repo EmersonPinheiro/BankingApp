@@ -69,7 +69,6 @@ const TransactionsList: FC = () => {
       setLoadingList(true);
       const items = await fetchTransactions(INITIAL_PAGE_LENGTH);
 
-      console.log({items});
       setTransactionList(items);
       setLoadingList(false);
     }
@@ -113,14 +112,12 @@ const TransactionsList: FC = () => {
             new Date(),
           );
 
-          console.log({parsedSelectedDate}, {parsedItemDate});
           return compareAsc(parsedSelectedDate, parsedItemDate) === 0;
         }),
       );
     } else if (selectedDate === undefined) {
       if (!loadingList) {
         if (!showingAllTransactions) {
-          console.log('OOOWW');
           getTransactions();
         } else {
           getAllTransactions();
@@ -178,7 +175,6 @@ const TransactionsList: FC = () => {
     (_, date) => {
       const currentDate = date || selectedDate;
 
-      console.log('onchange');
       setSelectedDate(currentDate);
       setShowDatePicker(Platform.OS === 'ios');
     },
