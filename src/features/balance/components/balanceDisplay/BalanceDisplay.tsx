@@ -13,7 +13,7 @@ import {BRLCurrencyFormat} from '../../../../utils/mixins';
 import {UserDataContext} from '../../../../api/DataContextProvider';
 
 const BalanceDisplay: FC = () => {
-  const [showBalance, setShowBalance] = useState<boolean>();
+  const [showBalance, setShowBalance] = useState<boolean>(true);
 
   const userDataContext = useContext(UserDataContext);
 
