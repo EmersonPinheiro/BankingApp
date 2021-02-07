@@ -1,5 +1,5 @@
-import React, {FC, useCallback, useState} from 'react';
-import {FlatList, View, Text, TouchableOpacity, Modal} from 'react-native';
+import React, {FC, useCallback, useEffect, useState} from 'react';
+import {FlatList, TouchableOpacity, Platform, View} from 'react-native';
 import {ITransaction} from '../../../../api/ITransaction';
 import {TransactionDetailsModal, TransactionListItem} from './components';
 import {
@@ -10,7 +10,12 @@ import {
   StyledTouchable,
   StyledTouchableTextContainer,
   StyledTouchableText,
+  DateFilterTouchableText,
+  DateFilterText,
+  DateFilterTextContainer,
 } from './styles';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {compareAsc, parse, format} from 'date-fns';
 
 const MOCK_ITEMS = [
   {
@@ -59,6 +64,34 @@ const MOCK_ITEMS = [
 
 const TransactionsList: FC = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<ITransaction>();
+  const [transactionList, setTransactionList] = useState(MOCK_ITEMS);
+  const [selectedDate, setSelectedDate] = useState();
+  const [showDatePicker, setShowDatePicker] = useState<boolean>();
+
+  useEffect(() => {
+    if (selectedDate) {
+      const parsedSelectedDate = parse(
+        format(selectedDate, 'dd/MM/yyyy'),
+        'dd/MM/yyyy',
+        new Date(),
+      );
+
+      setTransactionList(
+        MOCK_ITEMS.filter((el) => {
+          const parsedItemDate = parse(
+            format(new Date(el.date), 'dd/MM/yyyy'),
+            'dd/MM/yyyy',
+            new Date(),
+          );
+
+          console.log({parsedSelectedDate}, {parsedItemDate});
+          return compareAsc(parsedSelectedDate, parsedItemDate) === 0;
+        }),
+      );
+    } else {
+      setTransactionList(MOCK_ITEMS);
+    }
+  }, [selectedDate]);
 
   const showTransactionDetails = useCallback((transaction) => {
     setSelectedTransaction(transaction);
@@ -85,13 +118,40 @@ const TransactionsList: FC = () => {
     [],
   );
 
+  const onChangeDate = useCallback(
+    (_, date) => {
+      const currentDate = date || selectedDate;
+      setSelectedDate(currentDate);
+      setShowDatePicker(Platform.OS === 'ios');
+    },
+    [selectedDate],
+  );
+
   return (
     <>
       <Container>
         <Title>Histórico de transações</Title>
+        <View>
+          <DateFilterTextContainer>
+            {!selectedDate ? (
+              <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                <DateFilterTouchableText>Escolha uma data para filtrar</DateFilterTouchableText>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <DateFilterText>
+                  Transações do dia {format(selectedDate, 'dd/MM/yyyy')}
+                </DateFilterText>
+                <TouchableOpacity onPress={() => setSelectedDate(undefined)}>
+                  <DateFilterTouchableText>Limpar filtro</DateFilterTouchableText>
+                </TouchableOpacity>
+              </>
+            )}
+          </DateFilterTextContainer>
+        </View>
 
         <FlatList
-          data={MOCK_ITEMS}
+          data={transactionList}
           renderItem={renderItem}
           keyExtractor={(item, index) => item.toString() + index.toString()}
           contentContainerStyle={{paddingBottom: 16}}
@@ -104,6 +164,9 @@ const TransactionsList: FC = () => {
         transaction={selectedTransaction}
         onRequestClose={() => setSelectedTransaction(undefined)}
       />
+      {showDatePicker && (
+        <DateTimePicker value={selectedDate ?? new Date()} onChange={onChangeDate} />
+      )}
     </>
   );
 };

@@ -35,9 +35,27 @@ export const StyledTouchable = styled.TouchableOpacity`
 export const StyledTouchableTextContainer = styled.View`
   flex: 1;
 `;
+
 export const StyledTouchableText = styled.Text`
   text-align: right;
   color: #00aeef;
   font-family: 'Montserrat-Bold';
   margin-vertical: 12px;
+`;
+
+export const DateFilterTextContainer = styled.View`
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 8px;
+`;
+
+export const DateFilterTouchableText = styled.Text`
+  color: #00aeef;
+  font-family: 'Montserrat-Bold';
+`;
+
+export const DateFilterText = styled.Text`
+  color: #333333;
+  font-family: 'Montserrat-Bold';
 `;
