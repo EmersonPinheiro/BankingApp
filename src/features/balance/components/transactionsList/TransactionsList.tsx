@@ -23,6 +23,7 @@ import {
   DateFilterTextContainer,
   ActivityIndicatorContainer,
   CollapseListIconContainer,
+  EmptyListText,
 } from './styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {compareAsc, parse, format} from 'date-fns';
@@ -148,7 +149,7 @@ const TransactionsList: FC = () => {
 
   const ItemSeparatorComponent = useCallback(() => <ItemSeparator />, []);
   const ListFooterComponent = useCallback(() => {
-    if (showingAllTransactions) {
+    if (showingAllTransactions || !transactionList?.length) {
       return null;
     }
 
@@ -169,7 +170,16 @@ const TransactionsList: FC = () => {
         )}
       </>
     );
-  }, [getAllTransactions, loadingMore, showingAllTransactions]);
+  }, [getAllTransactions, loadingMore, showingAllTransactions, transactionList]);
+
+  const ListEmptyComponent = useCallback(
+    () => (
+      <EmptyListText>
+        Não há nenhuma transação para esse dia. Que tal filtrar por uma nova data? ;)
+      </EmptyListText>
+    ),
+    [],
+  );
 
   const onChangeDate = useCallback(
     (_, date) => {
@@ -243,6 +253,7 @@ const TransactionsList: FC = () => {
             ItemSeparatorComponent={ItemSeparatorComponent}
             showsVerticalScrollIndicator={false}
             ListFooterComponent={ListFooterComponent}
+            ListEmptyComponent={ListEmptyComponent}
           />
         )}
       </Container>

@@ -61,6 +61,12 @@ export const DateFilterText = styled.Text`
   font-family: 'Montserrat-Bold';
 `;
 
+export const EmptyListText = styled.Text`
+  color: #333333;
+  font-family: 'Montserrat-Medium';
+  text-align: center;
+`;
+
 export const ActivityIndicatorContainer = styled.View`
   flex: 1;
   justify-content: center;
