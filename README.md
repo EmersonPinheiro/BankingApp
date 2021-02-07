@@ -21,7 +21,7 @@ Also, ESLint was used to speed up development and improve code quality.
 
 ## :hammer_and_wrench: Steps to reproduce
 
-With a connected Android device:
+With a connected Android device and a working React Native environment:
 
 ```
 $ git clone https://github.com/EmersonPinheiro/BankingApp.git
