@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
 import {FlatList, TouchableOpacity, Platform, View} from 'react-native';
 import {ITransaction} from '../../../../api/ITransaction';
 import {TransactionDetailsModal, TransactionListItem} from './components';
@@ -16,6 +16,7 @@ import {
 } from './styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {compareAsc, parse, format} from 'date-fns';
+import {UserDataContext} from '../../../../../App';
 
 const MOCK_ITEMS = [
   {
@@ -63,8 +64,9 @@ const MOCK_ITEMS = [
 ];
 
 const TransactionsList: FC = () => {
+  const {transactions} = useContext(UserDataContext) as {transactions: ITransaction[]};
   const [selectedTransaction, setSelectedTransaction] = useState<ITransaction>();
-  const [transactionList, setTransactionList] = useState(MOCK_ITEMS);
+  const [transactionList, setTransactionList] = useState<ITransaction[]>(transactions);
   const [selectedDate, setSelectedDate] = useState();
   const [showDatePicker, setShowDatePicker] = useState<boolean>();
 
@@ -77,7 +79,7 @@ const TransactionsList: FC = () => {
       );
 
       setTransactionList(
-        MOCK_ITEMS.filter((el) => {
+        transactions.filter((el) => {
           const parsedItemDate = parse(
             format(new Date(el.date), 'dd/MM/yyyy'),
             'dd/MM/yyyy',
@@ -89,9 +91,9 @@ const TransactionsList: FC = () => {
         }),
       );
     } else {
-      setTransactionList(MOCK_ITEMS);
+      setTransactionList(transactions);
     }
-  }, [selectedDate]);
+  }, [selectedDate, transactions]);
 
   const showTransactionDetails = useCallback((transaction) => {
     setSelectedTransaction(transaction);

@@ -14,6 +14,7 @@ import {
   CloseIconTouchableContainer,
   CloseIconContainer,
 } from './styles';
+import {BRLCurrencyFormat} from '../../../../../../utils/mixins';
 
 interface TransactionDetailsModalProps {
   transaction?: ITransaction;
@@ -34,9 +35,7 @@ const TransactionDetailsModal: FC<TransactionDetailsModalProps> = ({
       ? format(new Date(transaction.date), "dd/MM/yyyy 'às' hh:mm:ss")
       : '';
     const label = date ? (positiveAmount ? 'Recebido em ' + date : 'Pago em ' + date) : '';
-    const amount = `${positiveAmount ? '+ ' : '- '}R$ ${Math.abs(+transaction.amount)
-      .toFixed(2)
-      .replace('.', ',')}`;
+    const amount = `${positiveAmount ? '+ ' : '- '}${BRLCurrencyFormat(transaction.amount)}`;
 
     return {...transaction, positiveAmount, label, amount};
   }, [transaction]);

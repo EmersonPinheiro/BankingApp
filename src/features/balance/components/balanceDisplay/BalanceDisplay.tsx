@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useCallback, useState, useContext} from 'react';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   BalanceTitle,
@@ -8,9 +8,13 @@ import {
   IconContainer,
 } from './styles';
 import Icon from 'react-native-vector-icons/Feather';
+import {UserDataContext} from '../../../../../App';
+import {BRLCurrencyFormat} from '../../../../utils/mixins';
 
 const BalanceDisplay: FC = () => {
   const [showBalance, setShowBalance] = useState<boolean>();
+
+  const userDataContext = useContext(UserDataContext);
 
   const toggleBalanceVisibility = useCallback(() => {
     setShowBalance(!showBalance);
@@ -30,7 +34,11 @@ const BalanceDisplay: FC = () => {
     <>
       <BalanceTitle>Meu saldo</BalanceTitle>
       <BalanceTouchableWrapper>
-        {showBalance ? <BalanceText numberOfLines={1}>R$34,87</BalanceText> : <HideBalanceView />}
+        {showBalance ? (
+          <BalanceText numberOfLines={1}>{BRLCurrencyFormat(userDataContext.balance)}</BalanceText>
+        ) : (
+          <HideBalanceView />
+        )}
         <TouchableOpacity onPress={toggleBalanceVisibility}>{renderIcon()}</TouchableOpacity>
       </BalanceTouchableWrapper>
     </>

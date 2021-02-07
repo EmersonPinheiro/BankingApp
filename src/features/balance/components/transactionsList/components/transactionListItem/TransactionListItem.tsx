@@ -4,6 +4,7 @@ import {Container, Description, PositiveIndicatorText, DescriptionContainer} fro
 import {format} from 'date-fns';
 import Icon from 'react-native-vector-icons/Feather';
 import {ITransaction} from '../../../../../../api/ITransaction';
+import {BRLCurrencyFormat} from '../../../../../../utils/mixins';
 
 interface TransactionListItemProps {
   item: ITransaction;
@@ -16,9 +17,7 @@ const TransactionListItem: FC<TransactionListItemProps> = ({item, showTransactio
     const date = item.date ? format(new Date(item.date), 'dd/MM/yyyy') : '';
     const label = date ? (positiveAmount ? 'Recebido em ' + date : 'Pago em ' + date) : '';
     const iconName = positiveAmount ? 'arrow-down' : 'arrow-up';
-    const amount = `${positiveAmount ? '+ ' : '- '}R$ ${Math.abs(item.amount)
-      .toFixed(2)
-      .replace('.', ',')}`;
+    const amount = `${positiveAmount ? '+ ' : '- '}${BRLCurrencyFormat(item.amount)}`;
     return {
       positiveAmount,
       label,

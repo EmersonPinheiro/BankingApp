@@ -26,7 +26,7 @@ export const BalanceTouchableWrapper = styled.View`
 export const HideBalanceView = styled.View`
   height: 30px;
   width: 100px;
-  background-color: #7c7c7f;
+  background-color: #d7d7d7;
 `;
 
 export const IconContainer = styled.View`
