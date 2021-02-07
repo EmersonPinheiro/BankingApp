@@ -1,24 +1,30 @@
-import React, {FC} from 'react';
-import {View} from 'react-native';
+import React, {FC, useContext} from 'react';
 import {Button} from '../../../../components';
-import {Container, ButtonContainer} from './styles';
+import {
+  Container,
+  ButtonContainer,
+  InfoContainer,
+  Title,
+  Subtitle,
+  PersonalDataContainer,
+  Text,
+} from './styles';
 import {useNavigation} from '@react-navigation/native';
+import {UserDataContext} from '../../../../../App';
 
 const HomeScreen: FC = () => {
-  /**
-   * TODO:
-   * [] Background
-   * [x] Botão para navegar pro balance
-   *** [] Animação pro botão
-   *** [] Loading pro botão
-   */
-
   const {navigate} = useNavigation();
+  const {name} = useContext(UserDataContext);
 
   return (
     <Container>
-      {/**FIXME: PROVISÓRIO */}
-      <View style={{flex: 8, backgroundColor: 'black'}} />
+      <InfoContainer>
+        <Subtitle>meu</Subtitle>
+        <Title>banQi</Title>
+        <PersonalDataContainer>
+          <Text>Bem-vindo(a) de volta, {name}!</Text>
+        </PersonalDataContainer>
+      </InfoContainer>
       <ButtonContainer>
         <Button
           title="Acessar"
