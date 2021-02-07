@@ -149,7 +149,7 @@ const TransactionsList: FC = () => {
 
   const ItemSeparatorComponent = useCallback(() => <ItemSeparator />, []);
   const ListFooterComponent = useCallback(() => {
-    if (showingAllTransactions || !transactionList?.length) {
+    if (showingAllTransactions || !transactionList?.length || selectedDate) {
       return null;
     }
 
@@ -170,7 +170,13 @@ const TransactionsList: FC = () => {
         )}
       </>
     );
-  }, [getAllTransactions, loadingMore, showingAllTransactions, transactionList]);
+  }, [
+    getAllTransactions,
+    loadingMore,
+    selectedDate,
+    showingAllTransactions,
+    transactionList?.length,
+  ]);
 
   const ListEmptyComponent = useCallback(
     () => (
@@ -185,8 +191,8 @@ const TransactionsList: FC = () => {
     (_, date) => {
       const currentDate = date || selectedDate;
 
-      setSelectedDate(currentDate);
       setShowDatePicker(Platform.OS === 'ios');
+      setSelectedDate(currentDate);
     },
     [selectedDate],
   );
