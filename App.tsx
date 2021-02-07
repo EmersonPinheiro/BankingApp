@@ -33,8 +33,6 @@ function RootNavigator() {
 }
 
 const App: FC = () => {
-  console.log({userData});
-
   return (
     <NavigationContainer>
       <UserDataContext.Provider value={userData}>

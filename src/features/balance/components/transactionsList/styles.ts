@@ -59,3 +59,9 @@ export const DateFilterText = styled.Text`
   color: #333333;
   font-family: 'Montserrat-Bold';
 `;
+
+export const ActivityIndicatorContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  padding: 16px;
+`;

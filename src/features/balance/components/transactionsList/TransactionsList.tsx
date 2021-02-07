@@ -1,5 +1,5 @@
-import React, {FC, useCallback, useContext, useEffect, useState} from 'react';
-import {FlatList, TouchableOpacity, Platform, View} from 'react-native';
+import React, {FC, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import {FlatList, TouchableOpacity, Platform, View, ActivityIndicator} from 'react-native';
 import {ITransaction} from '../../../../api/ITransaction';
 import {TransactionDetailsModal, TransactionListItem} from './components';
 import {
@@ -13,73 +13,85 @@ import {
   DateFilterTouchableText,
   DateFilterText,
   DateFilterTextContainer,
+  ActivityIndicatorContainer,
 } from './styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {compareAsc, parse, format} from 'date-fns';
 import {UserDataContext} from '../../../../../App';
 
-const MOCK_ITEMS = [
-  {
-    _id: 'f21e64ed-36154398-ba03-9dff23128f4a',
-    date: '2021-01-10T16:30:00-03:00',
-    description: 'PixIn: Peter Sagan',
-    amount: '350.0',
-  },
-  {
-    _id: 'g22e64ed-44154398-ca02-hgff23128f4a',
-    date: '2021-01-11T13:03:00-03:00',
-    description: 'Uber',
-    amount: '-7.49',
-  },
-  {
-    _id: 'h21e64ed-88994398-bb99-9dff23128f4a',
-    date: '2021-01-11T20:15:00-03:00',
-    description: 'iFood',
-    amount: '-35.0',
-  },
-  {
-    _id: '033e64ed-23154398-ad22-9dff23128f4a',
-    date: '2021-01-12T16:30:00-03:00',
-    description: 'Apple.com',
-    amount: '-10.9',
-  },
-  {
-    _id: 'z55e64ed-89154398-xz02-9dff23128f4a',
-    date: '2021-01-12T18:01:00-03:00',
-    description: 'Amazon Prime',
-    amount: '-9.9',
-  },
-  {
-    _id: 'xy3e64ed-45154398-af02-9dff23128f4a',
-    date: '2021-01-13T17:24:56-03:00',
-    description: 'Spotify',
-    amount: '-21.9',
-  },
-  {
-    _id: 'xy3e64ed-76154398-ah04-9dff23128f4a',
-    date: '2021-01-14T16:30:00-03:00',
-    description: 'Cashback',
-    amount: '13.27',
-  },
-];
+const INITIAL_PAGE_LENGTH = 3;
 
 const TransactionsList: FC = () => {
   const {transactions} = useContext(UserDataContext) as {transactions: ITransaction[]};
   const [selectedTransaction, setSelectedTransaction] = useState<ITransaction>();
-  const [transactionList, setTransactionList] = useState<ITransaction[]>(transactions);
+  const [transactionList, setTransactionList] = useState<ITransaction[]>();
   const [selectedDate, setSelectedDate] = useState();
   const [showDatePicker, setShowDatePicker] = useState<boolean>();
 
+  // All the fetching logic could be made using a Redux like solution (ex. Context, Redux...), but here, I'll just emulate it with loadings inside the screen (which isn't good ;/ )
+  // Also, the date filter may contain some workarounds, in order to work with the emulated requests functions created.
+  const [loadingList, setLoadingList] = useState<boolean>(false);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [showingAllTransactions, setShowingAllTransactions] = useState<boolean>(false);
+  const fetchTransactions = useCallback(
+    (pageLength?: number) => {
+      return new Promise<ITransaction[]>((resolve, reject) => {
+        try {
+          let items: ITransaction[] = [];
+
+          setTimeout(() => {
+            items = transactions.slice(0, pageLength);
+            resolve(items);
+          }, 1500);
+        } catch (error) {
+          reject();
+        }
+      });
+    },
+    [transactions],
+  );
+
+  const getTransactions = useCallback(async () => {
+    if (!loadingList && !transactionList) {
+      setLoadingList(true);
+      const items = await fetchTransactions(INITIAL_PAGE_LENGTH);
+
+      console.log({items});
+      setTransactionList(items);
+      setLoadingList(false);
+    }
+  }, [fetchTransactions, loadingList, transactionList]);
+
+  const getAllTransactions = useCallback(async () => {
+    if (!showingAllTransactions) {
+      setLoadingMore(true);
+      const items = await fetchTransactions();
+      setTransactionList(items);
+      setLoadingMore(false);
+      setShowingAllTransactions(true);
+    }
+  }, [fetchTransactions, showingAllTransactions]);
+
   useEffect(() => {
-    if (selectedDate) {
+    getTransactions();
+  }, [getTransactions]);
+
+  const previousSelectedDateRef = useRef<Date>();
+  useEffect(() => {
+    previousSelectedDateRef.current = selectedDate;
+  }, [selectedDate]);
+  const previousSelectedDate = previousSelectedDateRef.current;
+
+  useEffect(() => {
+    if (selectedDate && transactionList && selectedDate !== previousSelectedDate) {
       const parsedSelectedDate = parse(
         format(selectedDate, 'dd/MM/yyyy'),
         'dd/MM/yyyy',
         new Date(),
       );
 
-      setTransactionList(
-        transactions.filter((el) => {
+      setTransactionList((tl) =>
+        tl.filter((el) => {
           const parsedItemDate = parse(
             format(new Date(el.date), 'dd/MM/yyyy'),
             'dd/MM/yyyy',
@@ -90,10 +102,26 @@ const TransactionsList: FC = () => {
           return compareAsc(parsedSelectedDate, parsedItemDate) === 0;
         }),
       );
-    } else {
-      setTransactionList(transactions);
+    } else if (selectedDate === undefined) {
+      if (!loadingList) {
+        if (!showingAllTransactions) {
+          console.log('OOOWW');
+          getTransactions();
+        } else {
+          getAllTransactions();
+        }
+      }
     }
-  }, [selectedDate, transactions]);
+  }, [
+    getAllTransactions,
+    getTransactions,
+    loadingList,
+    previousSelectedDate,
+    selectedDate,
+    showingAllTransactions,
+    transactionList,
+    transactions,
+  ]);
 
   const showTransactionDetails = useCallback((transaction) => {
     setSelectedTransaction(transaction);
@@ -107,27 +135,46 @@ const TransactionsList: FC = () => {
   );
 
   const ItemSeparatorComponent = useCallback(() => <ItemSeparator />, []);
-  const ListFooterComponent = useCallback(
-    () => (
-      <ListFooterContainer>
-        <StyledTouchable onPress={() => console.log('Ver mais')}>
-          <StyledTouchableTextContainer>
-            <StyledTouchableText>VER MAIS</StyledTouchableText>
-          </StyledTouchableTextContainer>
-        </StyledTouchable>
-      </ListFooterContainer>
-    ),
-    [],
-  );
+  const ListFooterComponent = useCallback(() => {
+    if (showingAllTransactions) {
+      return null;
+    }
+
+    return (
+      <>
+        {loadingMore ? (
+          <ActivityIndicatorContainer>
+            <ActivityIndicator color="#EC008C" />
+          </ActivityIndicatorContainer>
+        ) : (
+          <ListFooterContainer>
+            <StyledTouchable onPress={getAllTransactions}>
+              <StyledTouchableTextContainer>
+                <StyledTouchableText>VER MAIS</StyledTouchableText>
+              </StyledTouchableTextContainer>
+            </StyledTouchable>
+          </ListFooterContainer>
+        )}
+      </>
+    );
+  }, [getAllTransactions, loadingMore, showingAllTransactions]);
 
   const onChangeDate = useCallback(
     (_, date) => {
       const currentDate = date || selectedDate;
+
+      console.log('onchange');
       setSelectedDate(currentDate);
       setShowDatePicker(Platform.OS === 'ios');
     },
     [selectedDate],
   );
+
+  const onPressClean = useCallback(() => {
+    setTransactionList(undefined);
+    setSelectedDate(undefined);
+    setShowingAllTransactions(false);
+  }, []);
 
   return (
     <>
@@ -144,23 +191,28 @@ const TransactionsList: FC = () => {
                 <DateFilterText>
                   Transações do dia {format(selectedDate, 'dd/MM/yyyy')}
                 </DateFilterText>
-                <TouchableOpacity onPress={() => setSelectedDate(undefined)}>
+                <TouchableOpacity onPress={onPressClean}>
                   <DateFilterTouchableText>Limpar filtro</DateFilterTouchableText>
                 </TouchableOpacity>
               </>
             )}
           </DateFilterTextContainer>
         </View>
-
-        <FlatList
-          data={transactionList}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => item.toString() + index.toString()}
-          contentContainerStyle={{paddingBottom: 16}}
-          ItemSeparatorComponent={ItemSeparatorComponent}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={ListFooterComponent}
-        />
+        {loadingList ? (
+          <ActivityIndicatorContainer>
+            <ActivityIndicator color="#EC008C" size="large" />
+          </ActivityIndicatorContainer>
+        ) : (
+          <FlatList
+            data={transactionList}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => item.toString() + index.toString()}
+            contentContainerStyle={{paddingBottom: 16}}
+            ItemSeparatorComponent={ItemSeparatorComponent}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={ListFooterComponent}
+          />
+        )}
       </Container>
       <TransactionDetailsModal
         transaction={selectedTransaction}
